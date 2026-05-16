@@ -1,4 +1,4 @@
-import { BookOpen, MonitorPlay, Terminal } from "lucide-react";
+import { BookOpen, MonitorPlay, Terminal, ArrowRight } from "lucide-react";
 
 const GithubIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -9,77 +9,137 @@ const GithubIcon = ({ className }: { className?: string }) => (
 
 export default function ProfilePage() {
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 font-[family-name:var(--font-sans)] overflow-hidden selection:bg-blue-200 dark:selection:bg-blue-900 p-4">
-      {/* Background ambient gradients */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[40%] w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] bg-blue-500/20 dark:bg-blue-500/10 blur-[100px] sm:blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-0 right-[-10%] w-[400px] h-[400px] sm:w-[500px] sm:h-[500px] bg-purple-500/20 dark:bg-purple-500/10 blur-[80px] sm:blur-[100px] rounded-full pointer-events-none" />
-
-      <main className="relative z-10 flex flex-col items-center text-center w-full max-w-2xl py-12 px-6 rounded-3xl bg-white/30 dark:bg-zinc-900/40 backdrop-blur-2xl border border-white/50 dark:border-zinc-800/50 shadow-2xl">
-        
-        {/* Profile Avatar with glow effect */}
-        <div className="relative mb-8 group cursor-pointer">
-          <div className="absolute -inset-1 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-700 ease-out"></div>
-          <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border border-white/80 dark:border-zinc-800 bg-gradient-to-b from-white to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 shadow-inner flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-             <span className="text-3xl sm:text-4xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-tr from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-               YC
-             </span>
-          </div>
-        </div>
-
-        {/* User Headers */}
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3">
-          윤창식
+    <div className="min-h-screen bg-[#FFF4E0] text-black font-[family-name:var(--font-sans)] selection:bg-[#FF90E8] selection:text-black">
+      
+      {/* Navigation */}
+      <nav className="p-4 md:p-6 border-b-4 border-black bg-white flex justify-between items-center z-50 relative">
+        <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tighter cursor-pointer hover:skew-x-[-10deg] transition-transform">
+          YC.DEV
         </h1>
-        <p className="text-lg sm:text-xl font-semibold text-blue-600 dark:text-blue-400 mb-6 tracking-wide">
-          Frontend Developer & Educator
-        </p>
-        
-        {/* Biography */}
-        <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-lg mb-10 font-medium">
-          AI-Native 프로세스와 혁신적인 프론트엔드 에코시스템에 관심이 많습니다.
-          『자바스크립트+리액트 디자인 패턴』의 역자이며, 지식의 공유를 통해 성장하는 오픈소스 문화를 지향합니다.
-        </p>
+        <a 
+          href="https://github.com/CaesiumY" 
+          target="_blank" 
+          rel="noreferrer"
+          className="flex items-center gap-2 border-4 border-black px-4 py-2 bg-[#FF90E8] font-bold text-sm md:text-base shadow-[4px_4px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_#000] focus:shadow-[0px_0px_0px_#000] focus:translate-x-[4px] focus:translate-y-[4px] outline-none transition-all"
+        >
+          <GithubIcon className="w-5 h-5" />
+          GITHUB
+        </a>
+      </nav>
 
-        {/* Information Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-10">
-          <div className="flex flex-col items-center justify-center px-4 py-6 rounded-2xl bg-white/60 dark:bg-zinc-950/40 border border-zinc-200/50 dark:border-zinc-800/50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
-            <MonitorPlay className="w-7 h-7 text-blue-500 mb-3 group-hover:scale-110 transition-transform" strokeWidth={1.5} />
-            <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mb-1">프론트엔드 튜터</span>
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-500">팀스파르타 교육</span>
-          </div>
-          <div className="flex flex-col items-center justify-center px-4 py-6 rounded-2xl bg-white/60 dark:bg-zinc-950/40 border border-zinc-200/50 dark:border-zinc-800/50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
-            <BookOpen className="w-7 h-7 text-purple-500 mb-3 group-hover:scale-110 transition-transform" strokeWidth={1.5} />
-            <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mb-1">기술 서적 역자</span>
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-500">디자인 패턴 탐구</span>
-          </div>
-          <div className="flex flex-col items-center justify-center px-4 py-6 rounded-2xl bg-white/60 dark:bg-zinc-950/40 border border-zinc-200/50 dark:border-zinc-800/50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
-            <Terminal className="w-7 h-7 text-emerald-500 mb-3 group-hover:scale-110 transition-transform" strokeWidth={1.5} />
-            <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200 mb-1">오픈소스 메인테이너</span>
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-500">커뮤니티 리더십</span>
+      {/* Hero Section */}
+      <header className="px-6 py-20 md:py-32 border-b-4 border-black bg-[#FFDE59] relative overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute top-10 right-10 w-24 h-24 bg-white border-4 border-black shadow-[4px_4px_0px_#000] rotate-12 hidden md:block" />
+        <div className="absolute bottom-10 left-10 w-16 h-16 bg-[#38DBFF] border-4 border-black rounded-full shadow-[4px_4px_0px_#000] -rotate-12 hidden md:block" />
+
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
+          <div className="flex-1 text-center md:text-left">
+            <h2 className="text-6xl sm:text-7xl md:text-8xl font-black mb-6 uppercase tracking-tighter leading-none" style={{ textShadow: '4px 4px 0px #000' }}>
+              <span className="text-white block">윤창식</span>
+              Frontend<br/>Developer
+            </h2>
+            <p className="text-lg md:text-2xl font-bold bg-white inline-block px-4 py-2 border-4 border-black shadow-[4px_4px_0px_#000] mb-10">
+              AI-Native & UI/UX Enthusiast
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+              <a 
+                href="#about" 
+                className="px-6 md:px-8 py-3 md:py-4 bg-[#FF90E8] border-4 border-black font-black text-base md:text-lg shadow-[6px_6px_0px_#000] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[3px_3px_0px_#000] transition-all"
+              >
+                더 알아보기
+              </a>
+              <a 
+                href="https://caesiumy.dev" 
+                target="_blank" 
+                rel="noreferrer"
+                className="px-6 md:px-8 py-3 md:py-4 bg-white border-4 border-black font-black text-base md:text-lg shadow-[6px_6px_0px_#000] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[3px_3px_0px_#000] transition-all flex items-center gap-2 group"
+              >
+                기술 블로그 <ArrowRight className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-4 w-full">
-          <a
-            href="https://caesiumy.dev"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200 shadow-xl shadow-zinc-900/20 dark:shadow-white/20"
+      {/* About Section */}
+      <section id="about" className="px-6 py-20 md:py-32 border-b-4 border-black bg-white relative">
+        {/* Background decorations */}
+        <div className="absolute top-0 right-0 w-8 h-full bg-[#38DBFF] border-l-4 border-black hidden md:block" />
+
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl md:text-6xl font-black mb-10 uppercase tracking-tight border-b-4 border-black pb-4 inline-block text-[#FF90E8]" style={{ textShadow: '2px 2px 0px #000' }}>
+            About Me
+          </h2>
+          <div className="text-lg sm:text-xl md:text-2xl font-bold leading-relaxed space-y-6">
+            <p className="p-6 md:p-8 bg-[#38DBFF] border-4 border-black shadow-[6px_6px_0px_#000] md:shadow-[8px_8px_0px_#000] transform transition-transform hover:-translate-y-1">
+              <span className="text-3xl font-black">AI-Native</span> 프로세스와 혁신적인 프론트엔드 에코시스템에 관심이 많은 개발자입니다.
+            </p>
+            <p className="p-6 md:p-8 bg-[#A8FFA4] border-4 border-black shadow-[6px_6px_0px_#000] md:shadow-[8px_8px_0px_#000] transform transition-transform hover:-translate-y-1">
+              『자바스크립트+리액트 디자인 패턴』의 역자이며, 지식의 공유를 통해 함께 성장하는 오픈소스 문화를 지향합니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Experiences Section */}
+      <section className="px-6 py-20 md:py-32 bg-[#FF90E8] border-b-4 border-black">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-4xl md:text-6xl font-black mb-12 uppercase tracking-tight border-b-4 border-black pb-4 inline-block text-white" style={{ textShadow: '3px 3px 0px #000' }}>
+            Experiences
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+            {/* Card 1 */}
+            <div className="bg-white border-4 border-black shadow-[6px_6px_0px_#000] md:shadow-[8px_8px_0px_#000] p-6 md:p-8 flex flex-col items-start hover:-translate-y-2 transition-transform cursor-pointer group">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-[#FFDE59] border-4 border-black flex items-center justify-center rounded-full mb-6 group-hover:rotate-12 transition-transform">
+                <MonitorPlay className="w-8 h-8 md:w-10 md:h-10" strokeWidth={2.5} />
+              </div>
+              <h3 className="text-xl md:text-2xl font-black mb-2 uppercase">프론트엔드 튜터</h3>
+              <p className="font-bold text-gray-700 md:text-lg">팀스파르타 교육 과정</p>
+            </div>
+            {/* Card 2 */}
+            <div className="bg-white border-4 border-black shadow-[6px_6px_0px_#000] md:shadow-[8px_8px_0px_#000] p-6 md:p-8 flex flex-col items-start hover:-translate-y-2 transition-transform cursor-pointer group">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-[#38DBFF] border-4 border-black flex items-center justify-center rounded-full mb-6 group-hover:-rotate-12 transition-transform">
+                <BookOpen className="w-8 h-8 md:w-10 md:h-10" strokeWidth={2.5} />
+              </div>
+              <h3 className="text-xl md:text-2xl font-black mb-2 uppercase">기술 서적 역자</h3>
+              <p className="font-bold text-gray-700 md:text-lg">디자인 패턴 탐구</p>
+            </div>
+            {/* Card 3 */}
+            <div className="bg-white border-4 border-black shadow-[6px_6px_0px_#000] md:shadow-[8px_8px_0px_#000] p-6 md:p-8 flex flex-col items-start hover:-translate-y-2 transition-transform cursor-pointer group sm:col-span-2 md:col-span-1">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-[#A8FFA4] border-4 border-black flex items-center justify-center rounded-full mb-6 group-hover:rotate-12 transition-transform">
+                <Terminal className="w-8 h-8 md:w-10 md:h-10" strokeWidth={2.5} />
+              </div>
+              <h3 className="text-xl md:text-2xl font-black mb-2 uppercase">오픈소스 활동</h3>
+              <p className="font-bold text-gray-700 md:text-lg">인프라 및 커뮤니티 기여</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer / CTA */}
+      <footer className="bg-white px-6 py-16 md:py-24 text-center">
+        <div className="max-w-2xl mx-auto flex flex-col items-center">
+          <h2 className="text-3xl sm:text-4xl md:text-6xl font-black mb-6 md:mb-10 uppercase tracking-tighter" style={{ textShadow: '2px 2px 0px #FF90E8' }}>
+            Let's Collaborate!
+          </h2>
+          <p className="text-lg md:text-xl font-bold mb-10 text-gray-800">
+            흥미로운 아이디어가 있으신가요? Github에서 소통해요.
+          </p>
+          <a 
+            href="https://github.com/CaesiumY" 
+            target="_blank" 
+            rel="noreferrer"
+            className="inline-flex items-center gap-3 px-8 md:px-12 py-4 md:py-6 bg-black text-white font-black text-xl md:text-2xl border-4 border-black hover:bg-[#FFDE59] hover:text-black hover:shadow-[8px_8px_0px_#000] hover:-translate-y-1 transition-all"
           >
-            블로그 방문하기
-          </a>
-          <a
-            href="https://github.com/CaesiumY"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 font-bold text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 active:scale-[0.98] transition-all duration-200 shadow-sm tracking-wide group"
-          >
-            <GithubIcon className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-            GitHub
+            <GithubIcon className="w-8 h-8 md:w-10 md:h-10" />
+            CONNECT ON GITHUB
           </a>
         </div>
-      </main>
+        <p className="mt-20 font-bold text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase text-gray-500 border-t-4 border-black pt-8">
+          © {new Date().getFullYear()} YOON CHANG-SIK. Neobrutalism Design.
+        </p>
+      </footer>
     </div>
   );
 }
