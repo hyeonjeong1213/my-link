@@ -10,6 +10,8 @@
 
 본 설계에서는 사용자의 **디스플레이 네임(displayName)**이 URL Slug 역할을 하여 퍼블릭 라우팅 주소(`/:displayName`)로 사용됩니다. 최초 로그인 시 구글 지메일 아이디의 앞부분을 추출하여 초기 `displayName`으로 삼으며, 사용자의 본명은 `username` 필드로 별도 관리합니다.
 
+또한, 방문자가 퍼블릭 페이지에서 링크 카드를 클릭할 때마다 실시간으로 클릭 횟수를 카운팅하여 데이터베이스에 누적하고, 이를 소유자 대시보드에 실시간으로 표시하는 **분석 기능(clicks)**이 포함됩니다.
+
 ```mermaid
 erDiagram
     users {
@@ -23,6 +25,7 @@ erDiagram
         string linkId PK "Document ID (Auto-Generated)"
         string title "링크 제목"
         string url "목적지 외부 URL"
+        number clicks "누적 링크 클릭 카운트 (기본값: 0)"
         timestamp createdAt "생성 및 정렬용 타임스탬프"
     }
 
@@ -52,6 +55,7 @@ erDiagram
 | :--- | :--- | :---: | :--- | :--- |
 | `title` | `string` | **Yes** | `"새 링크"` | 화면에 렌더링될 링크 텍스트 타이틀 |
 | `url` | `string` | **Yes** | `""` | 리다이렉트될 타겟 주소 (예: `https://github.com`) |
+| `clicks` | `number` | **Yes** | `0` | 해당 링크 카드의 누적 클릭 횟수 |
 | `createdAt` | `timestamp` | **Yes** | 서버 현재 시간 | 대시보드 및 퍼블릭 뷰에서 생성 순서(오름차순) 정렬 기준 |
 
 > [!NOTE]
@@ -72,7 +76,11 @@ erDiagram
    - 쿼리 조건: `where("displayName_lowercase", "==", newDisplayName.toLowerCase())`
    - 본인이 아닌 타 유저의 도큐먼트가 발견되면 중복 오류로 판단해 변경을 취소하고 경고 메시지를 보여줍니다.
 
-### 3.2 URL 형식 자동 교정
+### 3.2 링크 클릭 카운팅 (Click Counting)
+방문자가 퍼블릭 페이지에서 링크 카드를 클릭하면 외부 페이지로 이동하기 직전에 데이터 누락 방지를 위해 트랜잭션 연산 또는 `FieldValue.increment(1)` 연산을 호출하여 Firestore 상의 해당 링크 도큐먼트 `clicks` 값을 원자적(Atomic)으로 1 증가시킵니다.
+- 쿼리 예시: `updateDoc(docRef, { clicks: increment(1) })`
+
+### 3.3 URL 형식 자동 교정
 - 사용자가 `url` 필드를 인라인 편집할 때 `http://` 또는 `https://`가 누락된 경우, 정규식 검사를 거쳐 접두사를 자동으로 붙여 Firestore에 저장합니다. (예: `github.com` -> `https://github.com`)
 
 ---
@@ -93,8 +101,12 @@ service cloud.firestore {
     
     // 2. links 서브 컬렉션 규칙
     match /users/{uid}/links/{linkId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == uid;
+      // 누구나 해당 유저의 링크 목록 조회 및 clicks 필드 업데이트(increment) 가능
+      allow read, update: if true;
+      // 생성, 삭제 및 그 외 본인 하위의 링크만 권한 제어
+      allow create, delete: if request.auth != null && request.auth.uid == uid;
+      // 업데이트 권한: 소유자가 아니더라도 clicks 필드만 1씩 증가시키는 업데이트는 허용하도록 세부 제어 가능
+      allow update: if request.auth != null && request.auth.uid == uid || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clicks']));
     }
   }
 }
