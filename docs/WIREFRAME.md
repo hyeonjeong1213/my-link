@@ -49,33 +49,34 @@ graph TD
 
 ## 2. 관리자 대시보드 화면 (Owner Dashboard Screen)
 
-로그인 완료 후 본인의 주소를 설정하고 외부 링크 카드를 실시간으로 인라인 편집(Inline Edit)하여 가꾸는 관리 도구 레이아웃입니다.
+로그인 완료 후 본인의 주소를 설정하고 외부 링크 카드를 실시간으로 인라인 편집(Inline Edit)하여 가꾸는 관리 도구 레이아웃입니다. 
+우측 상단에 **[내 페이지 보기]** 버튼이 항상 고정 노출되며, 편집 가능한 모든 텍스트 영역에는 항상 **연필 아이콘(✏️)**이 기재되어 사용자의 클릭을 직관적으로 유도합니다.
 
 ### 2.1 ASCII 아트 와이어프레임
 
 ```text
 +-----------------------------------------------------------------+
-|  [M Y L I N K]                                   [내 주소 복사]  |
-|  [로그아웃]                                                      |
+|  [M Y L I N K]                [로그아웃]        [내 페이지 보기]  | <-- (우측 상단 고정 배치)
+|  [내 주소 복사]                                                 |
 |                                                                 |
 |                 +-------------------------------+               |
-|                 |       hyeonjeong_dev          |  <-- displayName (URL Slug)
-|                 |       황 현 정 (Dev)          |  <-- username (실명)
+|                 |    hyeonjeong_dev ✏️           |  <-- displayName (URL Slug & ✏️ 항상 표시)
+|                 |    황 현 정 (Dev) ✏️           |  <-- username (실명 & ✏️ 항상 표시)
 |                 |                               |               |
-|                 |  미니멀리즘과 코드를 사랑하는 |  <-- introduction
-|                 |  프론트엔드 개발자입니다.     |      (자기소개)
+|                 |  미니멀리즘과 코드를 사랑하는 ✏️|  <-- introduction (자기소개 & ✏️ 항상 표시)
+|                 |  프론트엔드 개발자입니다.     |               |
 |                 +-------------------------------+               |
 |                                                                 |
 |  [+ 새 링크 추가]                                                |
 |                                                                 |
 |  +-----------------------------------------------------------+  |
-|  | [Favicon]  내 개인 GitHub                         [X]     |  | <-- Title (인라인 편집)
-|  |            https://github.com/hyeonjeong_dev      👁️: 42   |  | <-- URL (인라인 편집, clicks 수 노출)
+|  | [Favicon]  내 개인 GitHub ✏️                       [X]     |  | <-- Title (✏️ 항상 노출)
+|  |            https://github.com/hyeonjeong_dev ✏️    👁️: 42   |  | <-- URL (✏️ 항상 노출)
 |  +-----------------------------------------------------------+  |
 |                                                                 |
 |  +-----------------------------------------------------------+  |
-|  | [Favicon]  네이버 블로그                          [X]     |  |
-|  |            https://blog.naver.com                 👁️: 10   |  |
+|  | [Favicon]  네이버 블로그 ✏️                        [X]     |  |
+|  |            https://blog.naver.com ✏️               👁️: 10   |  |
 |  +-----------------------------------------------------------+  |
 |                                                                 |
 +-----------------------------------------------------------------+
@@ -89,13 +90,14 @@ graph TB
         subgraph HeaderSection["헤더 영역"]
             Logo["로고 (H1)"]
             LogoutBtn["로그아웃 버튼"]
-            CopyUrlBtn["내 페이지 링크 복사 버튼 (Clipboard Toast API)"]
+            CopyUrlBtn["내 주소 복사 버튼 (Clipboard Toast API)"]
+            ViewMyPageBtn["내 페이지 보기 버튼 (우측 상단 항상 고정, target='_blank')"]
         end
 
-        subgraph ProfileSection["인라인 편집 가능 프로필 카드"]
-            DispNameInput["displayName (Input - 고유 URL Slug, 실시간 중복검증)"]
-            UserNameInput["username (Input - 실제 이름)"]
-            IntroTextarea["introduction (Textarea - 자기소개)"]
+        subgraph ProfileSection["인라인 편집 가능 프로필 카드 (연필 ✏️ 상시 노출)"]
+            DispNameInput["displayName (Input - 고유 URL Slug) + ✏️ 아이콘"]
+            UserNameInput["username (Input - 실제 이름) + ✏️ 아이콘"]
+            IntroTextarea["introduction (Textarea - 자기소개) + ✏️ 아이콘"]
         end
 
         subgraph LinkManageSection["링크 관리 구역"]
@@ -103,8 +105,8 @@ graph TB
             
             subgraph LinkCardInstance["개별 링크 카드 컴포넌트"]
                 FaviconLoader["실시간 구글 파비콘 API 이미지"]
-                LinkTitleInput["링크 타이틀 (인라인 Input)"]
-                LinkUrlInput["링크 URL (인라인 Input - 자동 프로토콜 보정)"]
+                LinkTitleInput["링크 타이틀 (인라인 Input) + ✏️ 아이콘"]
+                LinkUrlInput["링크 URL (인라인 Input - 자동 스키마 보정) + ✏️ 아이콘"]
                 ClickStat["누적 클릭 수 (Clicks Count Icon)"]
                 DeleteBtn["휴지통 아이콘 (Fade-out Delete Action)"]
             end
@@ -116,7 +118,7 @@ graph TB
 
 ## 3. 퍼블릭 프로필 화면 (Public Profile Screen)
 
-제3자 및 일반 방문자가 사용자의 고유 주소(`/:displayName`)로 직접 진입했을 때 마주하는, 불필요한 편집 기능이 완전히 탈거된 미니멀리즘 링크 트리 화면입니다.
+제3자 및 일반 방문자가 사용자의 고유 주소(`/:displayName`)로 직접 진입했을 때 마주하는, 연필 아이콘이나 편집 기능이 완전히 탈거된 미니멀리즘 링크 트리 화면입니다.
 
 ### 3.1 ASCII 아트 와이어프레임
 
@@ -148,7 +150,7 @@ graph TB
 ```mermaid
 graph TB
     subgraph PublicLayout["퍼블릭 뷰 레이아웃 (반응형 최적화 그리드)"]
-        subgraph PublicProfile["프로필 전시 카드"]
+        subgraph PublicProfile["프로필 전시 카드 (편집 ✏️ 표시 없음)"]
             PubDispName["displayName 표기 (텍스트)"]
             PubUsername["username 표기 (텍스트)"]
             PubIntro["introduction 표기 (텍스트)"]
