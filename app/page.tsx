@@ -1,7 +1,9 @@
 "use client"
 
+import { useState } from "react"
 import { Card } from "@/components/ui/card"
-import { links } from "@/data/links"
+import { links as initialLinks, LinkItem } from "@/data/links"
+import { AddLinkDialog } from "@/components/add-link-dialog"
 import { ExternalLink } from "lucide-react"
 
 export default function Page() {
@@ -10,12 +12,23 @@ export default function Page() {
     introduction: "디자인과 개발 사이 어딘가에 살고 있습니다 ✦",
   }
 
+  // 링크 목록 상태 관리 (추후 Firestore 연동 예정)
+  const [links, setLinks] = useState<LinkItem[]>(initialLinks)
+
+  function handleAddLink(newLink: LinkItem) {
+    // createdAt 기준 내림차순 정렬 (PRD 2.4)
+    setLinks((prev) =>
+      [...prev, newLink].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+    )
+  }
+
   return (
     <div className="min-h-svh bg-background flex flex-col items-center px-5 py-16">
 
       {/* 프로필 섹션 */}
       <section className="flex flex-col items-center text-center w-full max-w-xs mb-12">
-
         {/* 텍스트 아바타 — 이미지 업로드 없음 (PRD 2.3) */}
         <div className="relative mb-5">
           <div
@@ -26,21 +39,15 @@ export default function Page() {
           >
             {user.nickname.slice(0, 2).toUpperCase()}
           </div>
-          {/* 온라인 표시 닷 */}
           <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 ring-2 ring-background" />
         </div>
 
-        {/* 닉네임 */}
         <h1 className="text-xl font-semibold text-foreground tracking-tight">
           @{user.nickname}
         </h1>
-
-        {/* 소개글 */}
         <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
           {user.introduction}
         </p>
-
-        {/* 구분선 */}
         <div className="mt-8 w-12 h-px bg-border" />
       </section>
 
@@ -71,10 +78,7 @@ export default function Page() {
                            cursor-pointer rounded-xl"
               >
                 {/* 파비콘 (PRD: 구글 파비콘 API) */}
-                <div
-                  className="flex-shrink-0 w-9 h-9 rounded-lg
-                             bg-muted flex items-center justify-center overflow-hidden"
-                >
+                <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
                   <img
                     src={`https://s2.googleusercontent.com/s2/favicons?domain=${domain}&sz=64`}
                     alt=""
@@ -105,6 +109,11 @@ export default function Page() {
             </a>
           )
         })}
+
+        {/* 링크 추가 버튼 (PRD 2.4) */}
+        <div className="mt-1">
+          <AddLinkDialog onAdd={handleAddLink} />
+        </div>
       </section>
 
       {/* 푸터 */}
@@ -114,7 +123,6 @@ export default function Page() {
           mylink
         </p>
       </footer>
-
     </div>
   )
 }
