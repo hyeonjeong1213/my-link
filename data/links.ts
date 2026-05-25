@@ -1,39 +1,39 @@
 export interface LinkItem {
-  id: string;
+  id: string; // Firestore Document ID (Auto-Generated ID dummy)
   title: string;
-  uri: string;
-  icon?: string;
+  url: string; // Match 'url' instead of 'uri'
+  createdAt: string; // ISO String format representing timestamp
 }
 
 export const links: LinkItem[] = [
   {
-    id: "instagram",
+    id: "link_insta_01",
     title: "인스타그램",
-    uri: "https://www.instagram.com",
-    icon: "Instagram",
+    url: "https://www.instagram.com",
+    createdAt: new Date("2026-05-25T10:00:00Z").toISOString(),
   },
   {
-    id: "youtube",
+    id: "link_youtube_02",
     title: "유튜브",
-    uri: "https://www.youtube.com",
-    icon: "Youtube",
+    url: "https://www.youtube.com",
+    createdAt: new Date("2026-05-25T10:01:00Z").toISOString(),
   },
   {
-    id: "blog",
+    id: "link_blog_03",
     title: "블로그",
-    uri: "https://blog.naver.com",
-    icon: "BookOpen",
+    url: "https://blog.naver.com",
+    createdAt: new Date("2026-05-25T10:02:00Z").toISOString(),
   },
   {
-    id: "github",
+    id: "link_github_04",
     title: "GitHub",
-    uri: "https://github.com",
-    icon: "Github",
+    url: "https://github.com",
+    createdAt: new Date("2026-05-25T10:03:00Z").toISOString(),
   },
   {
-    id: "portfolio",
+    id: "link_portfolio_05",
     title: "포트폴리오",
-    uri: "https://portfolio.example.com",
-    icon: "Briefcase",
+    url: "https://portfolio.example.com",
+    createdAt: new Date("2026-05-25T10:04:00Z").toISOString(),
   },
 ];
