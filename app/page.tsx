@@ -26,6 +26,7 @@ export default function Page() {
 
   return (
     <div className="min-h-svh bg-background flex flex-col items-center px-5 py-16">
+        <AddLinkDialog onAdd={handleAddLink} />
 
       {/* 프로필 섹션 */}
       <section className="flex flex-col items-center text-center w-full max-w-xs mb-12">
@@ -111,9 +112,7 @@ export default function Page() {
         })}
 
         {/* 링크 추가 버튼 (PRD 2.4) */}
-        <div className="mt-1">
-          <AddLinkDialog onAdd={handleAddLink} />
-        </div>
+
       </section>
 
       {/* 푸터 */}
