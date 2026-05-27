@@ -27,86 +27,204 @@ import { useAuth } from "@/src/lib/AuthContext";
 
 // ─── 비로그인 랜딩 화면 ──────────────────────────────────────────────────────
 function LandingScreen({ onSignIn }: { onSignIn: () => void }) {
+  // Sample links for Marquee
+  const sampleLinks = [
+    { title: "Instagram", url: "https://instagram.com" },
+    { title: "GitHub", url: "https://github.com" },
+    { title: "블로그", url: "https://blog.naver.com" },
+    { title: "포트폴리오", url: "https://notion.so" },
+    { title: "YouTube", url: "https://youtube.com" },
+    { title: "X (Twitter)", url: "https://twitter.com" },
+  ];
+
   return (
-    <div className="min-h-svh flex flex-col items-center justify-center px-5 bg-background relative overflow-hidden">
-      {/* 배경 장식 */}
+    <div className="min-h-svh w-full bg-background relative overflow-x-hidden selection:bg-primary/20">
+      {/* 배경 블러 장식 */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <div className="absolute top-1/4 -left-20 w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px]" />
-        <div className="absolute bottom-1/4 -right-20 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px]" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[120px] -translate-y-1/2" />
+        <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] rounded-full bg-primary/5 blur-[150px] translate-x-1/3" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center text-center max-w-2xl w-full">
-        {/* 배지 */}
-        <div className="inline-flex items-center rounded-full border border-border/50 bg-card/40 backdrop-blur-md px-3 py-1 text-xs font-medium text-muted-foreground mb-8 shadow-sm">
-          <Sparkles className="w-3.5 h-3.5 mr-2 text-primary" />
-          가장 심플한 프로필 링크 서비스
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 pt-32 pb-12">
+        
+        {/* 1. Hero 섹션 (투칼럼) */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8 mb-32">
+          
+          {/* 좌측 텍스트 영역 */}
+          <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left mt-10 lg:mt-0">
+            <div className="inline-flex items-center rounded-full border border-border/50 bg-card/40 backdrop-blur-md px-3 py-1.5 text-xs font-semibold text-muted-foreground mb-6 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 mr-2 text-primary" />
+              가장 심플한 프로필 링크 서비스
+            </div>
+            
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.1] mb-6">
+              단 하나의 링크로 <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">
+                나를 표현하세요
+              </span>
+            </h1>
+            
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mb-10 leading-relaxed font-medium">
+              흩어져 있는 모든 소셜 미디어, 포트폴리오, 작업물을 하나의 깔끔한 페이지에 담아 공유해보세요. 복잡한 과정 없이 누구나 쉽게 완성할 수 있습니다.
+            </p>
+
+            <button
+              onClick={onSignIn}
+              className="group relative inline-flex items-center justify-center gap-3 bg-foreground text-background px-8 py-4 rounded-2xl font-semibold text-base transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-xl hover:shadow-2xl hover:shadow-foreground/20 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <div className="relative flex items-center gap-3 z-10">
+                <GoogleColorIcon />
+                <span>Google 계정으로 시작하기</span>
+              </div>
+            </button>
+            <p className="text-xs text-muted-foreground/60 tracking-wide mt-4">
+              가입 즉시 무료로 나만의 페이지가 생성됩니다
+            </p>
+          </div>
+
+          {/* 우측 폰 목업 애니메이션 영역 */}
+          <div className="flex-1 flex justify-center lg:justify-end w-full lg:w-auto relative perspective-[2000px]">
+            <div className="relative w-[280px] sm:w-[320px] h-[580px] sm:h-[640px] bg-background border-[8px] border-border/40 rounded-[3rem] shadow-2xl overflow-hidden animate-float ring-1 ring-border/50 backdrop-blur-3xl transform lg:rotate-y-[-5deg] lg:rotate-x-[5deg]">
+              {/* 노치 */}
+              <div className="absolute top-0 inset-x-0 h-6 flex justify-center z-20">
+                <div className="w-32 h-6 bg-border/40 rounded-b-3xl backdrop-blur-md" />
+              </div>
+              
+              {/* 목업 내부 컨텐츠 */}
+              <div className="w-full h-full p-6 pt-16 flex flex-col items-center bg-gradient-to-b from-primary/5 to-background pointer-events-none select-none">
+                <div className="w-20 h-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-3xl font-bold shadow-lg mb-4">
+                  ME
+                </div>
+                <h2 className="text-xl font-bold text-foreground mb-1">나의 프로필</h2>
+                <p className="text-sm text-muted-foreground mb-8 text-center">
+                  나를 소개하는 한 줄 문구입니다.
+                </p>
+                
+                <div className="w-full flex flex-col gap-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="w-full h-14 rounded-xl bg-card border border-border/50 flex items-center px-4 shadow-sm relative overflow-hidden">
+                      <div className="w-8 h-8 rounded-full bg-muted/50 flex-shrink-0" />
+                      <div className="ml-3 flex-1 flex flex-col gap-1.5">
+                        <div className="w-24 h-2.5 bg-muted rounded-full" />
+                        <div className="w-16 h-2 bg-muted/50 rounded-full" />
+                      </div>
+                      <ExternalLink className="w-4 h-4 text-muted-foreground/30 absolute right-4" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            {/* 장식용 떠다니는 아이콘들 */}
+            <div className="absolute top-10 lg:top-20 -left-4 lg:-left-10 w-16 h-16 rounded-2xl bg-card border border-border/50 shadow-xl flex items-center justify-center animate-float" style={{ animationDelay: '1s' }}>
+              <span className="text-2xl">🔥</span>
+            </div>
+            <div className="absolute bottom-20 lg:bottom-40 -right-4 lg:-right-8 w-14 h-14 rounded-2xl bg-card border border-border/50 shadow-xl flex items-center justify-center animate-float" style={{ animationDelay: '2.5s' }}>
+              <span className="text-xl">✨</span>
+            </div>
+          </div>
         </div>
 
-        {/* 메인 타이틀 */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15] mb-6">
-          단 하나의 링크로 <br className="hidden sm:block" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/50">
-            나를 표현하세요
-          </span>
-        </h1>
+        {/* 2. 무한 마퀴(Marquee) 섹션 */}
+        <div className="w-full py-16 mb-20 overflow-hidden relative flex flex-col items-center">
+          <p className="text-sm font-semibold text-muted-foreground mb-8 tracking-widest uppercase">
+            어떤 링크든 추가할 수 있습니다
+          </p>
+          
+          {/* 좌우 그라데이션 마스크 */}
+          <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-background to-transparent z-10" />
+          <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10" />
+          
+          <div className="flex w-max animate-marquee">
+            {/* 세 번 반복하여 끊김 없는 무한 스크롤 구현 */}
+            {[...sampleLinks, ...sampleLinks, ...sampleLinks].map((link, idx) => (
+              <div 
+                key={idx}
+                className="mx-3 flex items-center gap-3 px-6 py-3 rounded-full bg-card/60 border border-border/50 shadow-sm backdrop-blur-sm whitespace-nowrap"
+              >
+                <Link2 className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">{link.title}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <p className="text-sm sm:text-base text-muted-foreground max-w-lg mb-10 leading-relaxed">
-          흩어져 있는 모든 소셜 미디어, 포트폴리오, 작업물을 하나의 깔끔한 페이지에 담아 공유해보세요. 복잡한 과정 없이 누구나 쉽게 완성할 수 있습니다.
-        </p>
+        {/* 3. 기능 소개 (Features) 섹션 */}
+        <div className="w-full flex flex-col items-center text-center mb-32">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">왜 마이링크인가요?</h2>
+          <p className="text-muted-foreground mb-16 max-w-xl">
+            복잡한 웹사이트 제작 도구는 필요 없습니다. 클릭 몇 번으로 완벽하게 동작하는 모바일 최적화 프로필을 만드세요.
+          </p>
 
-        {/* 로그인 버튼 */}
-        <div className="flex flex-col items-center w-full max-w-xs gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            {[
+              {
+                icon: <Layers className="w-6 h-6 text-primary" />,
+                title: "손쉬운 링크 관리",
+                desc: "드래그 앤 드롭 수준의 직관적인 UI로 자유롭게 링크를 추가하고 배치하세요.",
+              },
+              {
+                icon: <Link2 className="w-6 h-6 text-primary" />,
+                title: "나만의 고유 주소",
+                desc: "mylink/아이디 형태의 깔끔한 고유 링크를 인스타그램 등 소셜 프로필에 바로 등록하세요.",
+              },
+              {
+                icon: <BarChart2 className="w-6 h-6 text-primary" />,
+                title: "실시간 성과 통계",
+                desc: "방문자들이 어떤 링크를 가장 많이 클릭했는지 직관적인 차트로 실시간 분석하세요.",
+              },
+            ].map((feat, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col items-center text-center p-8 rounded-[2rem] bg-card/20 backdrop-blur-md border border-border/40 shadow-sm hover:bg-card/40 transition-all duration-300 hover:-translate-y-2 group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-background border border-border/50 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                  {feat.icon}
+                </div>
+                <h3 className="text-lg font-bold text-foreground mb-3">{feat.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {feat.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 4. 하단 CTA 섹션 */}
+        <div className="w-full rounded-[3rem] bg-primary/5 border border-primary/10 p-12 md:p-20 flex flex-col items-center text-center relative overflow-hidden mb-12">
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+          
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
+            지금 바로 시작하세요
+          </h2>
+          <p className="text-muted-foreground mb-10 max-w-md">
+            가입부터 첫 링크 등록까지 1분이 채 걸리지 않습니다. 지금 나만의 링크를 만들어보세요.
+          </p>
+          
           <button
-            id="btn-landing-google-signin"
             onClick={onSignIn}
-            className="group relative w-full flex items-center justify-center gap-3 bg-foreground text-background px-6 py-4 rounded-2xl font-semibold text-sm transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-xl hover:shadow-2xl hover:shadow-foreground/10 overflow-hidden"
+            className="group relative flex items-center justify-center gap-3 bg-primary text-primary-foreground px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-xl hover:shadow-primary/30 overflow-hidden"
           >
-            {/* 버튼 내부 장식 */}
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
             <div className="relative flex items-center gap-3 z-10">
-              <GoogleColorIcon />
-              <span>Google 계정으로 시작하기</span>
+              <Sparkles className="w-5 h-5" />
+              <span>무료로 5초 만에 만들기</span>
             </div>
           </button>
-          <p className="text-[11px] text-muted-foreground/60 tracking-wide mt-2">
-            가입 즉시 무료로 나만의 페이지가 생성됩니다
-          </p>
         </div>
 
-        {/* 기능 하이라이트 (Glassmorphism 카드) */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-20 w-full">
-          {[
-            {
-              icon: <Layers className="w-5 h-5 text-primary" />,
-              title: "손쉬운 링크 관리",
-              desc: "드래그 앤 드롭 수준의 직관적인 UI로 자유롭게 링크를 추가하고 배치하세요.",
-            },
-            {
-              icon: <Link2 className="w-5 h-5 text-primary" />,
-              title: "나만의 주소",
-              desc: "mylink/아이디 형태의 깔끔한 고유 링크를 소셜 프로필에 바로 등록하세요.",
-            },
-            {
-              icon: <BarChart2 className="w-5 h-5 text-primary" />,
-              title: "실시간 성과 통계",
-              desc: "방문자들이 어떤 링크를 가장 많이 클릭했는지 직관적인 차트로 분석하세요.",
-            },
-          ].map((feat, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col items-start text-left p-6 rounded-3xl bg-card/40 backdrop-blur-md border border-border/50 shadow-sm hover:bg-card/60 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-xl bg-background border border-border/50 flex items-center justify-center mb-4 shadow-sm">
-                {feat.icon}
-              </div>
-              <h3 className="text-sm font-bold text-foreground mb-1.5">{feat.title}</h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                {feat.desc}
-              </p>
-            </div>
-          ))}
-        </div>
       </div>
+
+      {/* 5. 간이 푸터 */}
+      <footer className="w-full border-t border-border/30 bg-background/50 backdrop-blur-md py-8 flex flex-col items-center justify-center">
+        <p className="text-xs text-muted-foreground font-mono tracking-widest uppercase mb-2">
+          M Y L I N K
+        </p>
+        <p className="text-[10px] text-muted-foreground/60">
+          © {new Date().getFullYear()} MyLink. All rights reserved. (v1.0.0)
+        </p>
+      </footer>
     </div>
   );
 }
