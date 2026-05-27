@@ -3,6 +3,7 @@ export interface LinkItem {
   title: string;
   url: string; // Match 'url' instead of 'uri'
   createdAt: string; // ISO String format representing timestamp
+  clicks?: number; // 링크 클릭 수
 }
 
 export const links: LinkItem[] = [

@@ -7,7 +7,7 @@ import { AddLinkDialog } from "@/components/add-link-dialog";
 import { EditLinkInline } from "@/components/edit-link-inline";
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog";
 import { Header } from "@/components/header";
-import { ExternalLink, Pencil, Trash2, Link2 } from "lucide-react";
+import { ExternalLink, Pencil, Trash2, Link2, MousePointerClick } from "lucide-react";
 import { firebaseApp } from "@/lib/firebase";
 import {
   getFirestore,
@@ -153,6 +153,7 @@ function MyPage({ uid }: { uid: string }) {
         url: d.data().url,
         createdAt:
           d.data().createdAt?.toDate?.().toISOString?.() ?? new Date().toISOString(),
+        clicks: d.data().clicks || 0,
       }));
       setLinks(fetched);
       setInitialLoading(false);
@@ -418,10 +419,16 @@ function MyPage({ uid }: { uid: string }) {
                     }}
                   />
                 </div>
-                {/* 링크 타이틀 */}
-                <span className="flex-1 text-sm font-medium text-card-foreground group-hover:text-primary transition-colors duration-200 truncate">
-                  {link.title}
-                </span>
+                {/* 링크 타이틀 및 클릭수 */}
+                <div className="flex flex-col flex-1 min-w-0">
+                  <span className="text-sm font-medium text-card-foreground group-hover:text-primary transition-colors duration-200 truncate">
+                    {link.title}
+                  </span>
+                  <div className="flex items-center gap-1 mt-1 text-muted-foreground/60">
+                    <MousePointerClick className="w-3 h-3" />
+                    <span className="text-[10px] font-medium">{link.clicks || 0}</span>
+                  </div>
+                </div>
                 <div className="flex items-center gap-2 ml-auto">
                   <button
                     onClick={(e) => { e.preventDefault(); setEditingId(link.id); }}
