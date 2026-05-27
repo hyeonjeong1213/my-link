@@ -97,8 +97,8 @@ function LandingScreen({ onSignIn }: { onSignIn: () => void }) {
   );
 }
 
-// ─── 로그인 대시보드 화면 ─────────────────────────────────────────────────────
-function Dashboard({ uid }: { uid: string }) {
+// ─── 로그인 마이페이지 화면 ────────────────────────────────────────────────────
+function MyPage({ uid }: { uid: string }) {
   const { user } = useAuth();
 
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
@@ -346,7 +346,7 @@ export default function Page() {
     <>
       <Header />
       {user ? (
-        <Dashboard uid={user.uid} />
+        <MyPage uid={user.uid} />
       ) : (
         <LandingScreen onSignIn={signInWithGoogle} />
       )}
