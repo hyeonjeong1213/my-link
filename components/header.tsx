@@ -8,6 +8,7 @@ import { Menu } from "@base-ui/react/menu";
 import { Eye, Copy, LogOut, ChevronDown, Check, BarChart2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function Header() {
   const { user, signInWithGoogle, signOut } = useAuth();
@@ -53,9 +54,9 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-5 py-3.5 border-b border-border/50 bg-background/80 backdrop-blur-md">
       {/* 로고 */}
-      <span className="text-sm font-bold tracking-[0.25em] text-foreground uppercase select-none">
+      <Link href="/" className="text-sm font-bold tracking-[0.25em] text-foreground uppercase select-none hover:text-primary transition-colors cursor-pointer">
         M Y L I N K
-      </span>
+      </Link>
 
       {/* 우측 액션 영역 */}
       <div className="flex items-center gap-3">
