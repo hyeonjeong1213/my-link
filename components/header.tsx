@@ -1,9 +1,52 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAuth } from "@/src/lib/AuthContext";
+import { firebaseApp } from "@/lib/firebase";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { Menu } from "@base-ui/react/menu";
+import { Eye, Copy, LogOut, ChevronDown, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function Header() {
   const { user, signInWithGoogle, signOut } = useAuth();
+
+  // Firestore displayName (프로필에서 저장한 표시 이름)
+  const [profileDisplayName, setProfileDisplayName] = useState<string>("");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const emailPrefix = user.email?.split("@")[0] ?? "사용자";
+    const db = getFirestore(firebaseApp);
+    const userDoc = doc(db, "user", user.uid);
+    getDoc(userDoc).then((snap) => {
+      if (snap.exists() && snap.data().displayName) {
+        setProfileDisplayName(snap.data().displayName);
+      } else {
+        setProfileDisplayName(emailPrefix);
+      }
+    });
+  }, [user]);
+
+  const pageUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/${profileDisplayName}`
+      : "";
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(pageUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // clipboard API 미지원 환경 fallback
+    }
+  };
+
+  const handlePreview = () => {
+    window.open(pageUrl, "_blank");
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-5 py-3.5 border-b border-border/50 bg-background/80 backdrop-blur-md">
@@ -15,36 +58,130 @@ export function Header() {
       {/* 우측 액션 영역 */}
       <div className="flex items-center gap-3">
         {user ? (
-          <>
-            {/* 프로필 아바타 + 이름 */}
-            <div className="flex items-center gap-2">
+          <Menu.Root>
+            {/* 드롭다운 트리거 — 프로필 아바타 + 이름 */}
+            <Menu.Trigger
+              id="btn-profile-menu"
+              className="group flex items-center gap-2 rounded-xl px-2.5 py-1.5 hover:bg-muted transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
               {user.photoURL ? (
                 <img
                   src={user.photoURL}
-                  alt={user.displayName ?? "프로필"}
-                  width={30}
-                  height={30}
-                  className="rounded-full ring-2 ring-primary/30"
+                  alt={profileDisplayName || user.displayName || "프로필"}
+                  width={28}
+                  height={28}
+                  className="rounded-full ring-2 ring-primary/30 flex-shrink-0"
                 />
               ) : (
-                <div className="w-[30px] h-[30px] rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold">
-                  {(user.displayName ?? user.email ?? "U").slice(0, 1).toUpperCase()}
+                <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold flex-shrink-0">
+                  {(profileDisplayName || user.email || "U").slice(0, 1).toUpperCase()}
                 </div>
               )}
-              <span className="text-sm text-muted-foreground hidden sm:block max-w-[120px] truncate">
-                {user.displayName ?? user.email}
+              <span className="text-sm text-foreground hidden sm:block max-w-[110px] truncate font-medium">
+                {profileDisplayName || user.displayName || user.email}
               </span>
-            </div>
+              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground group-data-open:rotate-180 transition-transform duration-200" />
+            </Menu.Trigger>
 
-            {/* 로그아웃 버튼 */}
-            <button
-              id="btn-signout"
-              onClick={signOut}
-              className="text-xs text-muted-foreground hover:text-foreground border border-border/60 hover:border-border px-3 py-1.5 rounded-lg transition-all duration-200"
-            >
-              로그아웃
-            </button>
-          </>
+            {/* 드롭다운 패널 */}
+            <Menu.Portal>
+              <Menu.Positioner
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                className="z-50"
+              >
+                <Menu.Popup
+                  className={cn(
+                    "min-w-[220px] rounded-xl border border-border bg-popover shadow-lg shadow-black/10",
+                    "p-1.5 outline-none",
+                    "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
+                    "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+                    "origin-top-right"
+                  )}
+                >
+                  {/* 프로필 요약 헤더 */}
+                  <div className="px-3 py-2.5 mb-1 border-b border-border/50">
+                    <div className="flex items-center gap-2.5">
+                      {user.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt={profileDisplayName}
+                          width={36}
+                          height={36}
+                          className="rounded-full ring-2 ring-primary/20 flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold flex-shrink-0">
+                          {(profileDisplayName || "U").slice(0, 1).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-semibold text-foreground truncate">
+                          {profileDisplayName || user.displayName || "사용자"}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground truncate">
+                          {user.email}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 내 프로필 미리보기 */}
+                  <Menu.Item
+                    id="menu-preview"
+                    onClick={handlePreview}
+                    className={cn(
+                      "flex items-center gap-2.5 w-full rounded-lg px-3 py-2 text-sm text-foreground",
+                      "hover:bg-muted cursor-pointer outline-none transition-colors duration-150",
+                      "focus-visible:bg-muted"
+                    )}
+                  >
+                    <Eye className="w-4 h-4 text-muted-foreground" />
+                    <span>내 프로필 미리보기</span>
+                  </Menu.Item>
+
+                  {/* 내 페이지 링크 복사 */}
+                  <Menu.Item
+                    id="menu-copy-link"
+                    onClick={handleCopyLink}
+                    closeOnClick={false}
+                    className={cn(
+                      "flex items-center gap-2.5 w-full rounded-lg px-3 py-2 text-sm text-foreground",
+                      "hover:bg-muted cursor-pointer outline-none transition-colors duration-150",
+                      "focus-visible:bg-muted"
+                    )}
+                  >
+                    {copied ? (
+                      <Check className="w-4 h-4 text-primary" />
+                    ) : (
+                      <Copy className="w-4 h-4 text-muted-foreground" />
+                    )}
+                    <span className={copied ? "text-primary font-medium" : ""}>
+                      {copied ? "복사 완료!" : "내 페이지 링크 복사"}
+                    </span>
+                  </Menu.Item>
+
+                  {/* 구분선 */}
+                  <Menu.Separator className="my-1 h-px bg-border/50" />
+
+                  {/* 로그아웃 */}
+                  <Menu.Item
+                    id="menu-signout"
+                    onClick={signOut}
+                    className={cn(
+                      "flex items-center gap-2.5 w-full rounded-lg px-3 py-2 text-sm text-destructive",
+                      "hover:bg-destructive/10 cursor-pointer outline-none transition-colors duration-150",
+                      "focus-visible:bg-destructive/10"
+                    )}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>로그아웃</span>
+                  </Menu.Item>
+                </Menu.Popup>
+              </Menu.Positioner>
+            </Menu.Portal>
+          </Menu.Root>
         ) : (
           <button
             id="btn-header-signin"
