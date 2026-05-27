@@ -7,7 +7,7 @@ import { AddLinkDialog } from "@/components/add-link-dialog";
 import { EditLinkInline } from "@/components/edit-link-inline";
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog";
 import { Header } from "@/components/header";
-import { ExternalLink, Pencil, Trash2, Link2, MousePointerClick } from "lucide-react";
+import { ExternalLink, Pencil, Trash2, Link2, MousePointerClick, Sparkles, BarChart2, Layers } from "lucide-react";
 import { firebaseApp } from "@/lib/firebase";
 import {
   getFirestore,
@@ -30,73 +30,83 @@ function LandingScreen({ onSignIn }: { onSignIn: () => void }) {
   return (
     <div className="min-h-svh flex flex-col items-center justify-center px-5 bg-background relative overflow-hidden">
       {/* 배경 장식 */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden z-0">
+        <div className="absolute top-1/4 -left-20 w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px]" />
+        <div className="absolute bottom-1/4 -right-20 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px]" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center text-center max-w-sm w-full gap-8">
-        {/* 로고 */}
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-primary/20 shadow-lg shadow-primary/5">
-            <Link2 className="w-7 h-7 text-primary" strokeWidth={1.5} />
-          </div>
-          <h1 className="text-3xl font-bold tracking-[0.2em] text-foreground uppercase">
-            M Y L I N K
-          </h1>
+      <div className="relative z-10 flex flex-col items-center text-center max-w-2xl w-full">
+        {/* 배지 */}
+        <div className="inline-flex items-center rounded-full border border-border/50 bg-card/40 backdrop-blur-md px-3 py-1 text-xs font-medium text-muted-foreground mb-8 shadow-sm">
+          <Sparkles className="w-3.5 h-3.5 mr-2 text-primary" />
+          가장 심플한 프로필 링크 서비스
         </div>
 
-        {/* 서비스 소개 */}
-        <div className="flex flex-col gap-2">
-          <p className="text-base text-foreground font-medium">
-            가장 심플하게 나를 표현하는 한 장의 카드.
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Google 로그인 후 나만의 링크 목록을 만들고 <br className="hidden sm:block" />
-            단 하나의 링크로 공유해보세요 ✦
-          </p>
-        </div>
+        {/* 메인 타이틀 */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-[1.15] mb-6">
+          단 하나의 링크로 <br className="hidden sm:block" />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/50">
+            나를 표현하세요
+          </span>
+        </h1>
+
+        <p className="text-sm sm:text-base text-muted-foreground max-w-lg mb-10 leading-relaxed">
+          흩어져 있는 모든 소셜 미디어, 포트폴리오, 작업물을 하나의 깔끔한 페이지에 담아 공유해보세요. 복잡한 과정 없이 누구나 쉽게 완성할 수 있습니다.
+        </p>
 
         {/* 로그인 버튼 */}
-        <div className="w-full flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center w-full max-w-xs gap-3">
           <button
             id="btn-landing-google-signin"
             onClick={onSignIn}
-            className="group w-full flex items-center justify-center gap-3 bg-card hover:bg-primary hover:text-primary-foreground border border-border hover:border-primary text-foreground px-6 py-3.5 rounded-xl font-medium text-sm transition-all duration-300 shadow-sm hover:shadow-md hover:shadow-primary/20"
+            className="group relative w-full flex items-center justify-center gap-3 bg-foreground text-background px-6 py-4 rounded-2xl font-semibold text-sm transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-xl hover:shadow-2xl hover:shadow-foreground/10 overflow-hidden"
           >
-            <GoogleColorIcon />
-            <span>Google로 시작하기</span>
+            {/* 버튼 내부 장식 */}
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+            <div className="relative flex items-center gap-3 z-10">
+              <GoogleColorIcon />
+              <span>Google 계정으로 시작하기</span>
+            </div>
           </button>
-
-          {/* 안내 문구 */}
-          <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground/60">
-            <p>로그인하면 나만의 링크 페이지를 관리할 수 있어요</p>
-          </div>
+          <p className="text-[11px] text-muted-foreground/60 tracking-wide mt-2">
+            가입 즉시 무료로 나만의 페이지가 생성됩니다
+          </p>
         </div>
 
-        {/* 기능 소개 카드 */}
-        <div className="w-full grid grid-cols-3 gap-3 mt-2">
+        {/* 기능 하이라이트 (Glassmorphism 카드) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-20 w-full">
           {[
-            { icon: "🔗", title: "링크 관리", desc: "원하는 링크를 자유롭게 추가·편집" },
-            { icon: "✨", title: "개인화", desc: "나만의 프로필 페이지 생성" },
-            { icon: "📊", title: "통계", desc: "링크 클릭 수 실시간 확인" },
-          ].map((feat) => (
+            {
+              icon: <Layers className="w-5 h-5 text-primary" />,
+              title: "손쉬운 링크 관리",
+              desc: "드래그 앤 드롭 수준의 직관적인 UI로 자유롭게 링크를 추가하고 배치하세요.",
+            },
+            {
+              icon: <Link2 className="w-5 h-5 text-primary" />,
+              title: "나만의 주소",
+              desc: "mylink/아이디 형태의 깔끔한 고유 링크를 소셜 프로필에 바로 등록하세요.",
+            },
+            {
+              icon: <BarChart2 className="w-5 h-5 text-primary" />,
+              title: "실시간 성과 통계",
+              desc: "방문자들이 어떤 링크를 가장 많이 클릭했는지 직관적인 차트로 분석하세요.",
+            },
+          ].map((feat, idx) => (
             <div
-              key={feat.title}
-              className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-card border border-border/50 text-center"
+              key={idx}
+              className="flex flex-col items-start text-left p-6 rounded-3xl bg-card/40 backdrop-blur-md border border-border/50 shadow-sm hover:bg-card/60 transition-colors"
             >
-              <span className="text-xl">{feat.icon}</span>
-              <span className="text-xs font-semibold text-foreground">{feat.title}</span>
-              <span className="text-[11px] text-muted-foreground leading-tight">{feat.desc}</span>
+              <div className="w-10 h-10 rounded-xl bg-background border border-border/50 flex items-center justify-center mb-4 shadow-sm">
+                {feat.icon}
+              </div>
+              <h3 className="text-sm font-bold text-foreground mb-1.5">{feat.title}</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {feat.desc}
+              </p>
             </div>
           ))}
         </div>
       </div>
-
-      {/* 버전 */}
-      <p className="absolute bottom-6 text-xs text-muted-foreground/40 font-mono tracking-widest">
-        v1.0.0
-      </p>
     </div>
   );
 }
