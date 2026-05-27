@@ -11,11 +11,12 @@ import { LinkItem } from "@/data/links";
 
 interface EditLinkInlineProps {
   link: LinkItem;
+  uid: string;
   onCancel: () => void;
   onSaved: () => void;
 }
 
-export function EditLinkInline({ link, onCancel, onSaved }: EditLinkInlineProps) {
+export function EditLinkInline({ link, uid, onCancel, onSaved }: EditLinkInlineProps) {
   const [title, setTitle] = useState(link.title);
   const [url, setUrl] = useState(link.url);
   const [errors, setErrors] = useState<{ title?: string; url?: string }>({});
@@ -48,7 +49,7 @@ export function EditLinkInline({ link, onCancel, onSaved }: EditLinkInlineProps)
     setSaving(true);
     try {
       const db = getFirestore(firebaseApp);
-      const linkDoc = doc(db, "user", "anonymous", "links", link.id);
+      const linkDoc = doc(db, "user", uid, "links", link.id);
       await updateDoc(linkDoc, {
         title: title.trim(),
         url: url.trim(),

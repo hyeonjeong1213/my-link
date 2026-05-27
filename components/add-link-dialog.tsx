@@ -20,10 +20,11 @@ import { LinkItem } from "@/data/links"
 import { Plus } from "lucide-react"
 
 interface AddLinkDialogProps {
+  uid: string
   onAdd: (link: LinkItem) => void
 }
 
-export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
+export function AddLinkDialog({ uid, onAdd }: AddLinkDialogProps) {
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState("")
   const [url, setUrl] = useState("")
@@ -60,13 +61,13 @@ export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
 
     try {
       const db = getFirestore(firebaseApp);
-        const userDoc = doc(db, "user", "anonymous");
-        const linksCol = collection(userDoc, "links");
-        const docRef = await addDoc(linksCol, {
-          title: title.trim(),
-          url: url.trim(),
-          createdAt: Timestamp.now(),
-        });
+      const userDoc = doc(db, "user", uid);
+      const linksCol = collection(userDoc, "links");
+      const docRef = await addDoc(linksCol, {
+        title: title.trim(),
+        url: url.trim(),
+        createdAt: Timestamp.now(),
+      });
       console.log("Document written with ID:", docRef.id);
     } catch (err) {
       console.error("Error adding document:", err);

@@ -207,7 +207,7 @@ function Dashboard({ uid }: { uid: string }) {
 
       {/* 링크 관리 섹션 */}
       <section className="w-full max-w-sm flex flex-col gap-3">
-        <AddLinkDialog onAdd={handleAddLink} />
+        <AddLinkDialog uid={uid} onAdd={handleAddLink} />
 
         {adding && (
           <div className="flex justify-center items-center py-4">
@@ -236,6 +236,7 @@ function Dashboard({ uid }: { uid: string }) {
               <div key={link.id}>
                 <EditLinkInline
                   link={link}
+                  uid={uid}
                   onCancel={() => setEditingId(null)}
                   onSaved={() => setEditingId(null)}
                 />
