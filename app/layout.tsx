@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Nunito_Sans } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
+import { FirebaseProvider } from "../src/lib/FirebaseProvider";
 
 const geistHeading = Geist({subsets:['latin'],variable:'--font-heading'});
 
@@ -25,7 +26,9 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, "font-sans", nunitoSans.variable, geistHeading.variable)}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+                <FirebaseProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </FirebaseProvider>
       </body>
     </html>
   )

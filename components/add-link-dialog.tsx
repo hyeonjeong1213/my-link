@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { firebaseApp } from "@/lib/firebase"
+import { getFirestore, collection, addDoc, Timestamp, doc } from "firebase/firestore"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -28,37 +30,49 @@ export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
   const [error, setError] = useState<{ title?: string; url?: string }>({})
 
   function validate() {
-    const newError: { title?: string; url?: string } = {}
-    if (!title.trim()) newError.title = "제목을 입력해주세요."
+    const newError: { title?: string; url?: string } = {};
+    // 제목: 비어 있지 않아야 하고 최대 30자
+    if (!title.trim()) newError.title = "제목을 입력해주세요.";
+    else if (title.trim().length > 30) newError.title = "제목은 30자를 넘을 수 없습니다.";
+    // URL: 비어 있지 않아야 하고 http/https 프로토콜 확인
     if (!url.trim()) {
-      newError.url = "URL을 입력해주세요."
+        newError.url = "URL을 입력해주세요.";
     } else {
-      try {
-        new URL(url.trim())
-      } catch {
-        newError.url = "올바른 URL 형식으로 입력해주세요. (예: https://example.com)"
-      }
+        try {
+            const parsed = new URL(url.trim());
+            if (!/^https?:$/.test(parsed.protocol)) {
+                newError.url = "URL은 http 또는 https 프로토콜이어야 합니다.";
+            }
+        } catch {
+            newError.url = "올바른 URL 형식으로 입력해주세요. (예: https://example.com)";
+        }
     }
-    return newError
-  }
+    return newError;
+}
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    const newError = validate()
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const newError = validate();
     if (Object.keys(newError).length > 0) {
-      setError(newError)
-      return
+      setError(newError);
+      return;
     }
 
-    const newLink: LinkItem = {
-      id: `link_${Date.now()}`,
-      title: title.trim(),
-      url: url.trim(),
-      createdAt: new Date().toISOString(),
+    try {
+      const db = getFirestore(firebaseApp);
+        const userDoc = doc(db, "user", "anonymous");
+        const linksCol = collection(userDoc, "links");
+        const docRef = await addDoc(linksCol, {
+          title: title.trim(),
+          url: url.trim(),
+          createdAt: Timestamp.now(),
+        });
+      console.log("Document written with ID:", docRef.id);
+    } catch (err) {
+      console.error("Error adding document:", err);
     }
 
-    onAdd(newLink)
-    handleClose()
+    handleClose();
   }
 
   function handleClose() {
@@ -73,8 +87,8 @@ export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
       <DialogTrigger
         render={
           <Button
-            variant="outline"
-            className="w-full max-w-sm rounded-xl border-dashed border-border text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all duration-200 gap-2"
+            variant="default"
+            className="w-full max-w-sm rounded-xl border border-primary bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 gap-2"
           />
         }
       >
