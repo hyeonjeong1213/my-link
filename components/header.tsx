@@ -5,11 +5,13 @@ import { useAuth } from "@/src/lib/AuthContext";
 import { firebaseApp } from "@/lib/firebase";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { Menu } from "@base-ui/react/menu";
-import { Eye, Copy, LogOut, ChevronDown, Check } from "lucide-react";
+import { Eye, Copy, LogOut, ChevronDown, Check, BarChart2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export function Header() {
   const { user, signInWithGoogle, signOut } = useAuth();
+  const router = useRouter();
 
   // Firestore displayName (프로필에서 저장한 표시 이름)
   const [profileDisplayName, setProfileDisplayName] = useState<string>("");
@@ -139,6 +141,20 @@ export function Header() {
                   >
                     <Eye className="w-4 h-4 text-muted-foreground" />
                     <span>내 프로필 미리보기</span>
+                  </Menu.Item>
+
+                  {/* 통계 보기 */}
+                  <Menu.Item
+                    id="menu-stats"
+                    onClick={() => router.push("/stats")}
+                    className={cn(
+                      "flex items-center gap-2.5 w-full rounded-lg px-3 py-2 text-sm text-foreground",
+                      "hover:bg-muted cursor-pointer outline-none transition-colors duration-150",
+                      "focus-visible:bg-muted"
+                    )}
+                  >
+                    <BarChart2 className="w-4 h-4 text-muted-foreground" />
+                    <span>통계 보기</span>
                   </Menu.Item>
 
                   {/* 내 페이지 링크 복사 */}
