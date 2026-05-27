@@ -20,6 +20,8 @@ import {
   deleteDoc,
   setDoc,
   getDoc,
+  updateDoc,
+  increment,
 } from "firebase/firestore";
 import { useAuth } from "@/src/lib/AuthContext";
 
@@ -402,6 +404,15 @@ function MyPage({ uid }: { uid: string }) {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={async () => {
+                try {
+                  const db = getFirestore(firebaseApp);
+                  const linkDoc = doc(db, "user", uid, "links", link.id);
+                  await updateDoc(linkDoc, { clicks: increment(1) });
+                } catch (err) {
+                  console.error("클릭 수 업데이트 실패:", err);
+                }
+              }}
               className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
               style={{ animationDelay: `${index * 60}ms` }}
             >
