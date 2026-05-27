@@ -54,9 +54,9 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-5 py-3.5 border-b border-border/50 bg-background/80 backdrop-blur-md">
       {/* 로고 */}
-      <Link href="/" className="text-sm font-bold tracking-[0.25em] text-foreground uppercase select-none hover:text-primary transition-colors cursor-pointer">
+      <a href="/" className="text-sm font-bold tracking-[0.25em] text-foreground uppercase select-none hover:text-primary transition-colors cursor-pointer block">
         M Y L I N K
-      </Link>
+      </a>
 
       {/* 우측 액션 영역 */}
       <div className="flex items-center gap-3">
