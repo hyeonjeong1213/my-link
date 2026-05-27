@@ -18,6 +18,8 @@ import {
   onSnapshot,
   addDoc,
   deleteDoc,
+  setDoc,
+  getDoc,
 } from "firebase/firestore";
 import { useAuth } from "@/src/lib/AuthContext";
 
@@ -101,16 +103,44 @@ function LandingScreen({ onSignIn }: { onSignIn: () => void }) {
 function MyPage({ uid }: { uid: string }) {
   const { user } = useAuth();
 
+  // 이메일 앞부분을 기본 displayName으로
+  const emailPrefix = user?.email?.split("@")[0] ?? "사용자";
+
+  // ── 프로필 상태
+  const [profileDisplayName, setProfileDisplayName] = useState<string>("");
+  const [introduction, setIntroduction] = useState<string>("");
+  const [profileLoaded, setProfileLoaded] = useState(false);
+
+  // 인라인 편집 상태
+  const [editingField, setEditingField] = useState<"displayName" | "introduction" | null>(null);
+  const [draftDisplayName, setDraftDisplayName] = useState("");
+  const [draftIntroduction, setDraftIntroduction] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+
+  // ── 링크 상태
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [adding, setAdding] = useState<boolean>(false);
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editTitle, setEditTitle] = useState<string>("");
-  const [editUrl, setEditUrl] = useState<string>("");
-  const [editErrors, setEditErrors] = useState<{ title?: string; url?: string }>({});
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Firestore 실시간 구독 — user/{uid}/links
+  // 프로필 Firestore 로드
+  useEffect(() => {
+    const db = getFirestore(firebaseApp);
+    const userDoc = doc(db, "user", uid);
+    getDoc(userDoc).then((snap) => {
+      if (snap.exists()) {
+        setProfileDisplayName(snap.data().displayName ?? emailPrefix);
+        setIntroduction(snap.data().introduction ?? "");
+      } else {
+        setProfileDisplayName(emailPrefix);
+        setIntroduction("");
+      }
+      setProfileLoaded(true);
+    });
+  }, [uid, emailPrefix]);
+
+  // 링크 Firestore 실시간 구독 — user/{uid}/links
   useEffect(() => {
     const db = getFirestore(firebaseApp);
     const userDoc = doc(db, "user", uid);
@@ -130,6 +160,38 @@ function MyPage({ uid }: { uid: string }) {
     return () => unsub();
   }, [uid]);
 
+  // 프로필 편집 시작
+  const startEditField = (field: "displayName" | "introduction") => {
+    if (field === "displayName") setDraftDisplayName(profileDisplayName);
+    if (field === "introduction") setDraftIntroduction(introduction);
+    setEditingField(field);
+  };
+
+  // 프로필 저장
+  const saveProfile = async (field: "displayName" | "introduction") => {
+    setSavingProfile(true);
+    try {
+      const db = getFirestore(firebaseApp);
+      const userDoc = doc(db, "user", uid);
+      if (field === "displayName") {
+        const value = draftDisplayName.trim() || emailPrefix;
+        await setDoc(userDoc, { displayName: value }, { merge: true });
+        setProfileDisplayName(value);
+      } else {
+        await setDoc(userDoc, { introduction: draftIntroduction.trim() }, { merge: true });
+        setIntroduction(draftIntroduction.trim());
+      }
+    } catch (err) {
+      console.error("프로필 저장 오류:", err);
+    } finally {
+      setSavingProfile(false);
+      setEditingField(null);
+    }
+  };
+
+  // 편집 취소
+  const cancelEdit = () => setEditingField(null);
+
   const handleAddLink = async (newLink: { title: string; url: string }) => {
     setAdding(true);
     try {
@@ -146,13 +208,6 @@ function MyPage({ uid }: { uid: string }) {
     }
   };
 
-  const startEdit = (link: LinkItem) => {
-    setEditingId(link.id);
-    setEditTitle(link.title);
-    setEditUrl(link.url);
-    setEditErrors({});
-  };
-
   const handleDeleteLink = async (id: string) => {
     setDeletingId(null);
     try {
@@ -164,14 +219,12 @@ function MyPage({ uid }: { uid: string }) {
     }
   };
 
-  // 로그인 유저 닉네임 (표시명 앞 두 글자)
-  const displayName = user?.displayName ?? user?.email ?? "사용자";
-  const avatarText = displayName.slice(0, 2).toUpperCase();
+  const avatarText = (profileDisplayName || emailPrefix).slice(0, 2).toUpperCase();
 
   return (
     <div className="min-h-svh bg-background flex flex-col items-center px-5 pt-24 pb-16">
       {/* 초기 로딩 오버레이 */}
-      {initialLoading && (
+      {(initialLoading || !profileLoaded) && (
         <div className="fixed inset-0 flex items-center justify-center bg-background/90 z-50">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
         </div>
@@ -179,11 +232,12 @@ function MyPage({ uid }: { uid: string }) {
 
       {/* 프로필 섹션 */}
       <section className="flex flex-col items-center text-center w-full max-w-xs mb-10">
+        {/* 아바타 */}
         <div className="relative mb-5">
           {user?.photoURL ? (
             <img
               src={user.photoURL}
-              alt={displayName}
+              alt={profileDisplayName}
               width={80}
               height={80}
               className="w-20 h-20 rounded-full ring-4 ring-background shadow-lg object-cover"
@@ -196,12 +250,109 @@ function MyPage({ uid }: { uid: string }) {
           <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 ring-2 ring-background" />
         </div>
 
-        <h1 className="text-xl font-semibold text-foreground tracking-tight">
-          {displayName}
-        </h1>
-        {user?.email && (
-          <p className="mt-1 text-xs text-muted-foreground">{user.email}</p>
+        {/* 표시 이름 인라인 편집 */}
+        {editingField === "displayName" ? (
+          <div className="w-full flex flex-col items-center gap-2 mb-1">
+            <input
+              id="edit-display-name"
+              autoFocus
+              value={draftDisplayName}
+              onChange={(e) => setDraftDisplayName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveProfile("displayName");
+                if (e.key === "Escape") cancelEdit();
+              }}
+              placeholder={emailPrefix}
+              maxLength={30}
+              className="w-full text-center text-xl font-semibold bg-transparent border-b-2 border-primary outline-none pb-1 text-foreground placeholder:text-muted-foreground/50 transition-all"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => saveProfile("displayName")}
+                disabled={savingProfile}
+                className="text-xs px-3 py-1 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                {savingProfile ? "저장 중..." : "저장"}
+              </button>
+              <button
+                onClick={cancelEdit}
+                className="text-xs px-3 py-1 border border-border rounded-lg hover:bg-muted transition-colors"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            id="btn-edit-displayname"
+            onClick={() => startEditField("displayName")}
+            className="group flex items-center gap-1.5 mb-1 hover:text-primary transition-colors"
+            title="표시 이름 수정"
+          >
+            <h1 className="text-xl font-semibold text-foreground tracking-tight group-hover:text-primary transition-colors">
+              {profileDisplayName || emailPrefix}
+            </h1>
+            <Pencil className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary transition-colors" />
+          </button>
         )}
+
+        {/* 이메일 */}
+        {user?.email && (
+          <p className="text-xs text-muted-foreground mb-3">{user.email}</p>
+        )}
+
+        {/* 한줄 소개 인라인 편집 */}
+        {editingField === "introduction" ? (
+          <div className="w-full flex flex-col items-center gap-2 mt-1">
+            <textarea
+              id="edit-introduction"
+              autoFocus
+              value={draftIntroduction}
+              onChange={(e) => setDraftIntroduction(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") cancelEdit();
+              }}
+              placeholder="한줄 소개를 입력해주세요"
+              maxLength={100}
+              rows={2}
+              className="w-full text-center text-sm bg-transparent border-b-2 border-primary outline-none pb-1 text-foreground placeholder:text-muted-foreground/50 resize-none transition-all"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => saveProfile("introduction")}
+                disabled={savingProfile}
+                className="text-xs px-3 py-1 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                {savingProfile ? "저장 중..." : "저장"}
+              </button>
+              <button
+                onClick={cancelEdit}
+                className="text-xs px-3 py-1 border border-border rounded-lg hover:bg-muted transition-colors"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            id="btn-edit-introduction"
+            onClick={() => startEditField("introduction")}
+            className="group flex items-center gap-1.5 mt-1 hover:text-primary transition-colors max-w-full"
+            title="한줄 소개 수정"
+          >
+            {introduction ? (
+              <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors leading-relaxed text-center">
+                {introduction}
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground/40 italic group-hover:text-muted-foreground transition-colors">
+                한줄 소개를 추가해보세요
+              </p>
+            )}
+            <Pencil className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground/50 group-hover:text-primary transition-colors" />
+          </button>
+        )}
+
         <div className="mt-6 w-12 h-px bg-border" />
       </section>
 
@@ -273,7 +424,7 @@ function MyPage({ uid }: { uid: string }) {
                 </span>
                 <div className="flex items-center gap-2 ml-auto">
                   <button
-                    onClick={(e) => { e.preventDefault(); startEdit(link); }}
+                    onClick={(e) => { e.preventDefault(); setEditingId(link.id); }}
                     className="p-1 hover:text-primary transition-colors"
                     title="편집"
                   >
